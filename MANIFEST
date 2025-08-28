@@ -1,5 +1,6 @@
 Changes
 lib/Perl5/TestEachCommit.pm
+lib/Perl5/TestEachCommit/Util.pm
 LICENSE
 Makefile.PL
 MANIFEST

@@ -1,10 +1,17 @@
 package Perl5::TestEachCommit;
-use 5.14;
+use 5.014;
 use warnings;
 our $VERSION = '0.01';
+$VERSION = eval $VERSION;
 use Carp;
 #use IO::File;
 #use IO::Zlib;
+use Getopt::Long;
+use Data::Dump ( qw| dd pp| );
+use Perl5::TestEachCommit::Util qw(
+    process_command_line
+    prepare_repository
+);
 
 =encoding utf8
 
@@ -27,6 +34,45 @@ to leave the stub unedited.
 Blah blah blah.
 
 =head1 USAGE
+
+=cut
+
+#my ($workdir, $branch, $resultsdir, $configure_command, $make_test_prep_command,
+#    $make_test_harness_command, $verbose, $skip_test_harness);
+#my ($start_commit, $end_commit);
+#GetOptions(
+#    "workdir=s"    => \$workdir,
+#    "branch=s"    => \$branch,
+#    "resultsdir=s"    => \$resultsdir,
+#    "start=s"    => \$start_commit,
+#    "end=s"    => \$end_commit,
+#    "verbose"           => \$verbose,
+#
+#    "configure_command=s"    => \$configure_command,
+#    "make_test_prep_command=s"    => \$make_test_prep_command,
+#    "make_test_harness_command=s"    => \$make_test_harness_command,
+#    "skip_test_harness" => \$skip_test_harness,
+#) or croak "Error in command line arguments";
+#
+#$workdir //= $ENV{SECONDARY_CHECKOUT_DIR};
+#croak "Unable to locate workdir $workdir" unless -d $workdir;
+#chdir $workdir or croak "Unable to change to $workdir";
+#
+#my $grv = system(qq|
+#    git bisect reset && \
+#    git clean -dfxq && \
+#    git remote prune origin && \
+#    git fetch origin && \
+#    git checkout blead && \
+#    git rebase origin/blead
+#|) and croak "Unable to prepare $workdir for git activity";
+
+
+sub new {
+    my ($class, $params) = @_;
+    my $data = {};
+    return bless $data, $class;
+}
 
 =head1 BUGS
 
