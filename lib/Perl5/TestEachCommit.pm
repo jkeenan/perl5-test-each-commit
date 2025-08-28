@@ -67,8 +67,8 @@ Blah blah blah.
 
 sub new {
     my ($class, $params) = @_;
-    my $data = {};
-    return bless $data, $class;
+    my %data = map { $_ => $params->{$_} } keys %{$params};
+    return bless \%data, $class;
 }
 
 =head1 BUGS
