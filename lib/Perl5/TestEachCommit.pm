@@ -4,14 +4,11 @@ use warnings;
 our $VERSION = '0.01';
 $VERSION = eval $VERSION;
 use Carp;
-#use IO::File;
-#use IO::Zlib;
-use Getopt::Long;
 use Data::Dump ( qw| dd pp| );
 use Perl5::TestEachCommit::Util qw(
     process_command_line
-    prepare_repository
 );
+#prepare_repository
 
 =encoding utf8
 
