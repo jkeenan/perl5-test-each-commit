@@ -32,12 +32,29 @@ Blah blah blah.
 
 =head1 USAGE
 
-=cut
+TK
 
-#my ($workdir, $branch, $resultsdir, $configure_command, $make_test_prep_command,
-#    $make_test_harness_command, $verbose, $skip_test_harness);
-#my ($start_commit, $end_commit);
-#GetOptions(
+=head1 METHODS
+
+=head2 C<new()>
+
+
+
+=over 4
+
+=item * Purpose
+
+Perl5::TestEachCommit constructor.  Ensures that supplied arguments are
+plausible, I<e.g.,> directories needed can be located.
+
+=item * Arguments
+
+    my $self = Perl5::TestEachCommit->new( { %opts } );
+
+Single hash reference.  That hash B<must> include the following key-value pairs:
+
+=over 4
+
 #    "workdir=s"    => \$workdir,
 #    "branch=s"    => \$branch,
 #    "resultsdir=s"    => \$resultsdir,
@@ -49,7 +66,27 @@ Blah blah blah.
 #    "make_test_prep_command=s"    => \$make_test_prep_command,
 #    "make_test_harness_command=s"    => \$make_test_harness_command,
 #    "skip_test_harness" => \$skip_test_harness,
-#) or croak "Error in command line arguments";
+
+=back
+
+In addition, that hash B<may> include the following key-value pairs:
+
+=over 4
+
+=back
+
+=item * Return Value
+
+Perl5::TestEachCommit object (blessed hash reference).
+
+=item * Comment
+
+TK
+
+=back
+
+=cut
+
 #
 #$workdir //= $ENV{SECONDARY_CHECKOUT_DIR};
 #croak "Unable to locate workdir $workdir" unless -d $workdir;
@@ -73,7 +110,11 @@ sub new {
 
 =head1 BUGS
 
+TK
+
 =head1 SUPPORT
+
+TK
 
 =head1 AUTHOR
 
