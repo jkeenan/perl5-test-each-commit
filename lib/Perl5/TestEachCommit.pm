@@ -144,9 +144,25 @@ TK
 #    git rebase origin/blead
 #|) and croak "Unable to prepare $workdir for git activity";
 
+#* C<workdir>
+#* C<resultsdir>
+#* C<start>
+#* C<end>
+#* C<branch>
+#* C<configure_command>
+#* C<make_test_prep_command>
+#* C<make_test_harness_command>
+#* C<skip_test_harness>
+#* C<verbose>
 
 sub new {
     my ($class, $params) = @_;
+    croak "Must supply SHA of first commit to be studied to 'start'"
+        unless $params->{start};
+    croak "Must supply SHA of last commit to be studied to 'end'"
+        unless $params->{end};
+
+
     my %data = map { $_ => $params->{$_} } keys %{$params};
     return bless \%data, $class;
 }

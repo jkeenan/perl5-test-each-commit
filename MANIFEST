@@ -6,7 +6,6 @@ Makefile.PL
 MANIFEST
 MANIFEST.SKIP
 README
-t/01_load.t
-t/02_util.t
-t/03_new.t
+t/01-new.t
+t/02-util.t
 Todo

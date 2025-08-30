@@ -1,4 +1,4 @@
-# t/02_util.t
+# t/02-util.t
 use 5.014;
 use warnings;
 use Perl5::TestEachCommit::Util qw(
