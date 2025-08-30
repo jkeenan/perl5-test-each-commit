@@ -4,7 +4,7 @@ use warnings;
 use Perl5::TestEachCommit;
 use File::Temp qw(tempfile tempdir);
 use File::Spec::Functions;
-use Test::More qw(no_plan); # tests => 2;
+use Test::More tests => 16;
 use Data::Dump qw(dd pp);
 #use Capture::Tiny qw(capture_stderr);
 
