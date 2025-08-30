@@ -131,8 +131,6 @@ TK
 
 =cut
 
-#
-#$workdir //= $ENV{SECONDARY_CHECKOUT_DIR};
 #croak "Unable to locate workdir $workdir" unless -d $workdir;
 #chdir $workdir or croak "Unable to change to $workdir";
 #
@@ -145,18 +143,6 @@ TK
 #    git rebase origin/blead
 #|) and croak "Unable to prepare $workdir for git activity";
 
-#* C<start>
-#* C<end>
-#* C<workdir>
-#* C<resultsdir>
-#
-#* C<branch>
-#* C<configure_command>
-#* C<make_test_prep_command>
-#* C<make_test_harness_command>
-#* C<skip_test_harness>
-#* C<verbose>
-
 sub new {
     my ($class, $params) = @_;
     my $args = {};
@@ -166,8 +152,6 @@ sub new {
         unless $args->{start};
     croak "Must supply SHA of last commit to be studied to 'end'"
         unless $args->{end};
-        #map { $data{$_} => $args->{$_} } qw( start end );
-        #delete $args->{start}; delete $args->{end};
     $data{start} = delete $args->{start};
     $data{end} = delete $args->{end};
 
@@ -180,24 +164,19 @@ sub new {
     $args->{resultsdir} //= ($ENV{P5P_DIR} || '');
     -d $args->{resultsdir} or croak "Unable to locate resultsdir in $args->{resultsdir}";
     $data{resultsdir} = delete $args->{resultsdir};
-    #pp $args;
 
-#    $data{branch} = $args->{branch} || 'blead';
-#    delete $args->{branch};
-    if ($args->{branch}) {
-        $data{branch} = delete $args->{branch};
-    }
-    else {
-        $data{branch} = 'blead';
-    }
+    $data{branch} = $args->{branch} ? delete $args->{branch} : 'blead';
+    $data{configure_command} = $args->{configure_command}
+        ? delete $args->{configure_command}
+        : 'sh ./Configure -des -Dusedevel';
+    $data{make_test_prep_command} = $args->{make_test_prep_command}
+        ? delete $args->{make_test_prep_command}
+        : 'make test_prep';
+    $data{make_test_harness_command} = $args->{make_test_harness_command}
+        ? delete $args->{make_test_harness_command}
+        : 'make test_harness';
 
-    pp \%data;
-    for my $k (keys %$args) {
-        if (! exists $data{$k}) {
-            $data{$k} = $args->{$k};
-        }
-    }
-    pp \%data;
+    map { ! exists $data{$_} ?  $data{$_} = $args->{$_} : '' } keys %{$args};
     return bless \%data, $class;
 }
 

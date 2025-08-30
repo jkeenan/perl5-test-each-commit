@@ -68,7 +68,6 @@ note("Error Conditions in new()");
     my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
     delete $theseopts{resultsdir};
     local $ENV{P5P_DIR} = undef;
-    #$theseopts{resultsdir} = tempdir( CLEANUP => 1 );
     my $self;
     eval { $self = Perl5::TestEachCommit->new( \%theseopts ); };
     like($@,
@@ -77,10 +76,18 @@ note("Error Conditions in new()");
 }
 
 {
-    local $@;
     my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
     delete $theseopts{branch};
+    delete $theseopts{configure_command};
+    delete $theseopts{make_test_prep_command};
+    delete $theseopts{make_test_harness_command};
     my $self = Perl5::TestEachCommit->new( \%theseopts );
     is($self->{branch}, 'blead', "'branch' defaulted to blead");
+    is($self->{configure_command}, 'sh ./Configure -des -Dusedevel',
+        "'configure_command' set to default");
+    is($self->{make_test_prep_command}, 'make test_prep',
+        "'make_test_prep_command' set to default");
+    is($self->{make_test_harness_command}, 'make test_harness',
+        "'make_test_harness_command' set to default");
 }
 
