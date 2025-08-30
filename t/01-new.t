@@ -2,10 +2,8 @@
 use 5.014;
 use warnings;
 use Perl5::TestEachCommit;
-#use Perl5::TestEachCommit::Util qw(
-#    process_command_line
-#    usage
-#);
+use File::Temp qw(tempfile tempdir);
+use File::Spec::Functions;
 use Test::More qw(no_plan); # tests => 2;
 use Data::Dump qw(dd pp);
 #use Capture::Tiny qw(capture_stderr);
@@ -23,20 +21,17 @@ my $opts = {
     verbose => "",
     workdir => "/tmp",
 };
+
 my $self = Perl5::TestEachCommit->new( $opts );
 ok($self, "new() returned true value");
 isa_ok($self, 'Perl5::TestEachCommit',
     "object is a Perl5::TestEachCommit object");
-#pp($self);
 
-##### Error Conditions #####
+note("Error Conditions in new()");
 
-#    croak "Must supply SHA of first commit to be studied to 'start'"
-#        unless $params->{start};
-#    croak "Must supply SHA of last commit to be studied to 'end'"
 {
     local $@;
-    my %theseopts = %{$opts};
+    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
     delete $theseopts{start};
     my $self;
     eval { $self = Perl5::TestEachCommit->new( \%theseopts ); };
@@ -47,7 +42,7 @@ isa_ok($self, 'Perl5::TestEachCommit',
 
 {
     local $@;
-    my %theseopts = %{$opts};
+    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
     delete $theseopts{end};
     my $self;
     eval { $self = Perl5::TestEachCommit->new( \%theseopts ); };
@@ -56,5 +51,15 @@ isa_ok($self, 'Perl5::TestEachCommit',
         "Got exception for lack of 'end'"); 
 }
 
-
+#{
+#    local $@;
+#    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
+#    local $ENV{SECONDARY_CHECKOUT_DIR} = undef;
+#    $theseopts{workdir} = tempdir( CLEANUP => 1 );
+#    my $self;
+#    eval { $self = Perl5::TestEachCommit->new( \%theseopts ); };
+#    like($@,
+#        qr/$theseopts{workdir} is not a git checkout/,
+#        "Got exception for non-git-checkout for 'workdir'"); 
+#}
 

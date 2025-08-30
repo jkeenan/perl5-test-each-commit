@@ -5,6 +5,7 @@ our $VERSION = '0.01';
 $VERSION = eval $VERSION;
 use Carp;
 use Data::Dump ( qw| dd pp| );
+use File::Spec::Functions;
 use Perl5::TestEachCommit::Util qw(
     process_command_line
 );
@@ -144,10 +145,11 @@ TK
 #    git rebase origin/blead
 #|) and croak "Unable to prepare $workdir for git activity";
 
-#* C<workdir>
-#* C<resultsdir>
 #* C<start>
 #* C<end>
+#
+#* C<workdir>
+#* C<resultsdir>
 #* C<branch>
 #* C<configure_command>
 #* C<make_test_prep_command>
@@ -157,13 +159,24 @@ TK
 
 sub new {
     my ($class, $params) = @_;
+    my $args = {};
+    for my $k (keys %{$params}) { $args->{$k} = $params->{$k}; }
+    my %data;
     croak "Must supply SHA of first commit to be studied to 'start'"
-        unless $params->{start};
+        unless $args->{start};
     croak "Must supply SHA of last commit to be studied to 'end'"
-        unless $params->{end};
+        unless $args->{end};
+    map { $data{$_} => $args->{$_} } qw( start end );
+    delete $args->{start}; delete $args->{end};
 
+    # workdir: First see if it has been assigned and exists
+    # later: see whether it is a git checkout (and of perl)
+    $args->{workdir} //= ($ENV{SECONDARY_CHECKOUT_DIR} || '');
+    -d $args->{workdir} or croak "Unable to locate workdir in $args->{workdir}";
+#    croak "$args->{workdir} is not a git checkout"
+#        unless -d catdir($args->{workdir}, '.git');
 
-    my %data = map { $_ => $params->{$_} } keys %{$params};
+    %data = map { $_ => $args->{$_} } keys %{$args};
     return bless \%data, $class;
 }
 
