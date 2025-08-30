@@ -12,7 +12,6 @@ my $opts = {
     branch => "blead",
     configure_command => "sh ./Configure -des -Dusedevel",
     end => "002",
-    help => "",
     make_test_harness_command => "make test_harness",
     make_test_prep_command => "make test_prep",
     resultsdir => "/tmp",
@@ -27,7 +26,7 @@ ok($self, "new() returned true value");
 isa_ok($self, 'Perl5::TestEachCommit',
     "object is a Perl5::TestEachCommit object");
 
-note("Error Conditions in new()");
+note("Testing error conditions and defaults in new()");
 
 {
     local $@;
@@ -66,6 +65,18 @@ note("Error Conditions in new()");
 {
     local $@;
     my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
+    delete $theseopts{workdir};
+    my $tdir = '/tmp';
+    ok(-d $tdir, "okay to use $tdir during testing");
+    local $ENV{SECONDARY_CHECKOUT_DIR} = $tdir;
+    my $self;
+    eval { $self = Perl5::TestEachCommit->new( \%theseopts ); };
+    ok(! $@, "No exceptions, indicating $tdir assigned to 'workdir'");
+}
+
+{
+    local $@;
+    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
     delete $theseopts{resultsdir};
     local $ENV{P5P_DIR} = undef;
     my $self;
@@ -76,11 +87,25 @@ note("Error Conditions in new()");
 }
 
 {
+    local $@;
+    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
+    delete $theseopts{resultsdir};
+    my $tdir = '/tmp';
+    ok(-d $tdir, "okay to use $tdir during testing");
+    local $ENV{P5P_DIR} = $tdir;
+    my $self;
+    eval { $self = Perl5::TestEachCommit->new( \%theseopts ); };
+    ok(! $@, "No exceptions, indicating $tdir assigned to 'resultsdir'");
+}
+
+{
     my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
     delete $theseopts{branch};
     delete $theseopts{configure_command};
     delete $theseopts{make_test_prep_command};
     delete $theseopts{make_test_harness_command};
+    delete $theseopts{skip_test_harness};
+    delete $theseopts{verbose};
     my $self = Perl5::TestEachCommit->new( \%theseopts );
     is($self->{branch}, 'blead', "'branch' defaulted to blead");
     is($self->{configure_command}, 'sh ./Configure -des -Dusedevel',
@@ -89,5 +114,7 @@ note("Error Conditions in new()");
         "'make_test_prep_command' set to default");
     is($self->{make_test_harness_command}, 'make test_harness',
         "'make_test_harness_command' set to default");
+    ok(! $self->{skip_test_harness}, "'skip_test_harness' defaulted to off");
+    ok(! $self->{verbose}, "'verbose' defaulted to off");
 }
 

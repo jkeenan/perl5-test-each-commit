@@ -162,7 +162,8 @@ sub new {
     $data{workdir} = delete $args->{workdir};
 
     $args->{resultsdir} //= ($ENV{P5P_DIR} || '');
-    -d $args->{resultsdir} or croak "Unable to locate resultsdir in $args->{resultsdir}";
+    -d $args->{resultsdir}
+        or croak "Unable to locate resultsdir in $args->{resultsdir}";
     $data{resultsdir} = delete $args->{resultsdir};
 
     $data{branch} = $args->{branch} ? delete $args->{branch} : 'blead';
@@ -176,6 +177,15 @@ sub new {
         ? delete $args->{make_test_harness_command}
         : 'make test_harness';
 
+    $data{skip_test_harness} = defined $args->{skip_test_harness}
+        ? delete $args->{skip_test_harness}
+        : '';
+    $data{verbose} = defined $args->{verbose}
+        ? delete $args->{verbose}
+        : '';
+
+    # Double-check that every parameter ultimately gets into the object with
+    # some assignment.
     map { ! exists $data{$_} ?  $data{$_} = $args->{$_} : '' } keys %{$args};
     return bless \%data, $class;
 }
