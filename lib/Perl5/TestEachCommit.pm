@@ -147,9 +147,9 @@ TK
 
 #* C<start>
 #* C<end>
-#
 #* C<workdir>
 #* C<resultsdir>
+#
 #* C<branch>
 #* C<configure_command>
 #* C<make_test_prep_command>
@@ -166,19 +166,43 @@ sub new {
         unless $args->{start};
     croak "Must supply SHA of last commit to be studied to 'end'"
         unless $args->{end};
-    map { $data{$_} => $args->{$_} } qw( start end );
-    delete $args->{start}; delete $args->{end};
+        #map { $data{$_} => $args->{$_} } qw( start end );
+        #delete $args->{start}; delete $args->{end};
+    $data{start} = delete $args->{start};
+    $data{end} = delete $args->{end};
 
     # workdir: First see if it has been assigned and exists
     # later: see whether it is a git checkout (and of perl)
     $args->{workdir} //= ($ENV{SECONDARY_CHECKOUT_DIR} || '');
     -d $args->{workdir} or croak "Unable to locate workdir in $args->{workdir}";
-#    croak "$args->{workdir} is not a git checkout"
-#        unless -d catdir($args->{workdir}, '.git');
+    $data{workdir} = delete $args->{workdir};
 
-    %data = map { $_ => $args->{$_} } keys %{$args};
+    $args->{resultsdir} //= ($ENV{P5P_DIR} || '');
+    -d $args->{resultsdir} or croak "Unable to locate resultsdir in $args->{resultsdir}";
+    $data{resultsdir} = delete $args->{resultsdir};
+    #pp $args;
+
+#    $data{branch} = $args->{branch} || 'blead';
+#    delete $args->{branch};
+    if ($args->{branch}) {
+        $data{branch} = delete $args->{branch};
+    }
+    else {
+        $data{branch} = 'blead';
+    }
+
+    pp \%data;
+    for my $k (keys %$args) {
+        if (! exists $data{$k}) {
+            $data{$k} = $args->{$k};
+        }
+    }
+    pp \%data;
     return bless \%data, $class;
 }
+
+#    croak "$args->{workdir} is not a git checkout"
+#        unless -d catdir($args->{workdir}, '.git');
 
 =head1 BUGS
 

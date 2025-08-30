@@ -51,15 +51,36 @@ note("Error Conditions in new()");
         "Got exception for lack of 'end'"); 
 }
 
-#{
-#    local $@;
-#    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
-#    local $ENV{SECONDARY_CHECKOUT_DIR} = undef;
-#    $theseopts{workdir} = tempdir( CLEANUP => 1 );
-#    my $self;
-#    eval { $self = Perl5::TestEachCommit->new( \%theseopts ); };
-#    like($@,
-#        qr/$theseopts{workdir} is not a git checkout/,
-#        "Got exception for non-git-checkout for 'workdir'"); 
-#}
+{
+    local $@;
+    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
+    delete $theseopts{workdir};
+    local $ENV{SECONDARY_CHECKOUT_DIR} = undef;
+    my $self;
+    eval { $self = Perl5::TestEachCommit->new( \%theseopts ); };
+    like($@,
+        qr/Unable to locate workdir/,
+        "Got exception for lack of for 'workdir'"); 
+}
+
+{
+    local $@;
+    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
+    delete $theseopts{resultsdir};
+    local $ENV{P5P_DIR} = undef;
+    #$theseopts{resultsdir} = tempdir( CLEANUP => 1 );
+    my $self;
+    eval { $self = Perl5::TestEachCommit->new( \%theseopts ); };
+    like($@,
+        qr/Unable to locate resultsdir/,
+        "Got exception for lack of for 'resultsdir'"); 
+}
+
+{
+    local $@;
+    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
+    delete $theseopts{branch};
+    my $self = Perl5::TestEachCommit->new( \%theseopts );
+    is($self->{branch}, 'blead', "'branch' defaulted to blead");
+}
 
