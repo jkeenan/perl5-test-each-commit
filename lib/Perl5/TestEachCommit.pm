@@ -38,8 +38,6 @@ TK
 
 =head2 C<new()>
 
-
-
 =over 4
 
 =item * Purpose
@@ -51,27 +49,72 @@ plausible, I<e.g.,> directories needed can be located.
 
     my $self = Perl5::TestEachCommit->new( { %opts } );
 
-Single hash reference.  That hash B<must> include the following key-value pairs:
+Single hash reference.  That hash B<must> include the following key-value
+pairs:
 
 =over 4
 
-#    "workdir=s"    => \$workdir,
-#    "branch=s"    => \$branch,
-#    "resultsdir=s"    => \$resultsdir,
-#    "start=s"    => \$start_commit,
-#    "end=s"    => \$end_commit,
-#    "verbose"           => \$verbose,
-#
-#    "configure_command=s"    => \$configure_command,
-#    "make_test_prep_command=s"    => \$make_test_prep_command,
-#    "make_test_harness_command=s"    => \$make_test_harness_command,
-#    "skip_test_harness" => \$skip_test_harness,
+* C<workdir>
+
+String holding path to a directory which is a F<git> checkout of the Perl core
+distribution.  If you have previously set an environmental variable
+C<SECONDARY_CHECKOUT_DIR> to such a directory, that will be used; otherwise,
+path must be specified. (MODIFY)
+
+* C<resultsdir>
+
+String holding path to a directory in which any non-temporary files generated
+by use of this library can be created.  If you have previously set an
+environmental variable C<P5P_DIR> to such a directory, that will be used;
+otherwise, path must be specified. (MODIFY)
+
+* C<start>
+
+String holding SHA of the first commit in the series on which you wish
+reporting.
+
+* C<end>
+
+String holding SHA of the last commit in the series on which you wish
+reporting.
 
 =back
 
 In addition, that hash B<may> include the following key-value pairs:
 
 =over 4
+
+* C<branch>
+
+F<git> branch which must exist and be available for C<git checkout> in the
+directory specified by C<workdir>.  Defalults to C<blead>.
+
+* C<configure_command>
+
+String holding arguments to be passed to F<./Configure>.
+Defaults to C<sh ./Configure -des -Dusedevel>.
+
+* C<make_test_prep_command>
+
+String holding arguments to be passed to F<make test_prep>.
+Defaults to C<make test_prep>.
+
+* C<make_test_harness_command>
+
+String holding arguments to be passed to F<make test_harness>.
+Defaults to C<make test_harness>.
+
+* C<skip_test_harness>
+
+True/false value.  Defaults to false.  If true, when proceeding through a
+series of commits in a branch or pull request, the C<make test_harness> stage
+is skipped on the assumption that any significant failures are going to appear
+in the first two stages.
+
+* C<verbose>
+
+True/false value.  Defaults to false.  If true, prints to STDOUT a summary of
+switches in use and commits being tested.
 
 =back
 
