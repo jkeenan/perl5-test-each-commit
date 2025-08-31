@@ -320,18 +320,151 @@ TK
 
 sub display_commits {
     my $self = shift;
-    #dd $self->get_commits();
     say $_ for @{$self->get_commits()};
     return 1;
 }
 
-=head1 BUGS
+
+=head2 C<examine_all_commits()>
+
+=over 4
+
+=item * Purpose
+
+Iterate over all commits in the selected range, configuring, building and --
+assuming we have not elected to C<skip_test_harness> -- testing each commit.
+
+=item * Arguments
+
+    my $results_ref = $self->examine_all_commits();
+
+=item * Return Value
+
+Reference to an array holding hash references, one hashref per commit.  Each
+hashref reports the commit's SHA and its score (see C<examine_one_commit>).
+
+=item * Comment
 
 TK
+
+=back
+
+=cut
+
+sub examine_all_commits {
+    my $self = shift;
+    my @results = ();
+    $self->{results} = [];
+    for my $c (@{ $self->get_commits }) {
+        say STDERR "AAA: <$c>";
+        # my $score_ref = $self->examine_one_commit($c);
+        # push @{$self->{results}}, $score_ref;
+    }
+    return $self;
+}
+
+
+=head2 C<examine_one_commit()>
+
+=over 4
+
+=item * Purpose
+
+Configure, build and test one commit in the selected range.
+
+=item * Arguments
+
+    my $score_ref = $self->examine_one_commit($this_SHA);
+
+=item * Return Value
+
+Returns the Perl5::TestEachCommit object, how holding a list of results.
+
+=over 4
+
+=item * C<commit>: the commit's SHA.
+
+=item * C<score>: A numeral between 0 and 3 indicating how many stages the
+commit completed successfully:
+
+=over 4
+
+=item 0 Unable to configure.
+
+=item 1 Completed configuration only.
+
+=item 2 Completed configuration and build only.
+
+=item 3 Completed all of configuration, build and testing.
+
+=back
+
+=back
+
+=item * Comment
+
+Called internally within C<examine_all_commits()>.
+
+=back
+
+=cut
+
+sub examine_one_commit {
+    my ($self, $c) = @_;
+    chdir $self->{workdir} or croak "Unable to change to $self->{workdir}";
+
+    my $rv = system(qq|git clean -dfxq|) and croak "Unable to git-clean";
+    $rv = system(qq|git checkout $c|) and croak "Unable to git-checkout $c";
+    undef $rv;
+    my $commit_score = 0;
+
+    say STDERR "Configuring $c" if $self->{verbose};
+    $rv = system($self->{configure_command});
+    if ($rv) {
+        carp "Unable to configure at $c";
+        push @{$self->{results}}, { commit => $c, score => $commit_score };
+#        next COMMIT;
+        return;
+    }
+    else {
+        $commit_score++;
+
+        say STDERR "Building $c" if $self->{verbose};
+        $rv = system($self->{make_test_prep_command});
+        if ($rv) {
+            carp "Unable to make_test_prep at $c";
+            push @{$self->{results}}, { commit => $c, score => $commit_score };
+#            next COMMIT;
+            return;
+        }
+        else {
+            $commit_score++;
+
+            if ($self->{skip_test_harness}) {
+                say STDERR "Skipping 'make test_harness'" if $self->{verbose};
+            }
+            else {
+                say STDERR "Testing $c" if $self->{verbose};
+                $rv = system($self->{make_test_harness_command});
+                if ($rv) {
+                    carp "Unable to make_test_harness at $c";
+                }
+                else {
+                    $commit_score++;
+                }
+            }
+            push @{$self->{results}}, { commit => $c, score => $commit_score };
+        }
+    }
+}
+
+=head1 BUGS
+
+None reported so far.
 
 =head1 SUPPORT
 
-TK
+Contact the author.
 
 =head1 AUTHOR
 
@@ -341,6 +474,8 @@ TK
     https://thenceforward.net/perl/modules/Perl5-TestEachCommit
 
 =head1 COPYRIGHT
+
+Copyright 2025 James E Keenan
 
 This program is free software; you can redistribute
 it and/or modify it under the same terms as Perl itself.
