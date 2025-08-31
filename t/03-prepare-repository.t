@@ -10,13 +10,13 @@ use Test::More;
 if( defined $ENV{SECONDARY_CHECKOUT_DIR} and
         -d $ENV{SECONDARY_CHECKOUT_DIR} ) {
         #plan 'no_plan';
-    plan tests => 6;
+    plan tests => 9;
 }
 else {
     plan skip_all => 'Could not locate git checkout of Perl core distribution';
 }
-
 use Data::Dump qw(dd pp);
+use Capture::Tiny qw(capture_stdout);
 
 # NOTE:  The tests in this file depend on having a git checkout of the Perl
 # core distribution on disk.  We'll skip all if that is not the case.  If that
@@ -41,15 +41,44 @@ my $opts = {
     verbose => 1,
 };
 
-my $self = Perl5::TestEachCommit->new( $opts );
-ok($self, "new() returned true value");
-isa_ok($self, 'Perl5::TestEachCommit',
-    "object is a Perl5::TestEachCommit object");
+{
+    my $self = Perl5::TestEachCommit->new( $opts );
+    ok($self, "new() returned true value");
+    isa_ok($self, 'Perl5::TestEachCommit',
+        "object is a Perl5::TestEachCommit object");
 
-my $rv = $self->prepare_repository();
-ok($rv, "prepare_repository() returned true value");
+    note("Testing prepare_repository() ...");
+
+    my $rv = $self->prepare_repository();
+    ok($rv, "prepare_repository() returned true value");
+
+    note("Testing get_commits() and display_commits() ...");
+
+    my $expected_commits = [
+      "c9cd2e0cf4ad570adf68114c001a827190cb2ee9",
+      "79b32d926ef5961b4946ebe761a7058cb235f797",
+      "0dfa8ac113680e6acdef0751168ab231b9bf842c",
+    ];
+    my $commits = $self->get_commits();
+    is_deeply($commits, $expected_commits,
+        "Got expected list of SHAs");
+
+    my $stdout = capture_stdout {
+        $rv = $self->display_commits();
+    };
+    ok($rv, "display_commits() returned true value");
+    my @lines = split /\n/, $stdout;
+    my @got_lines = ();
+    for my $l (@lines) {
+        push @got_lines, $l;
+    }
+    is_deeply([@got_lines], $expected_commits,
+        "Displayed list of commits as expected");
+}
 
 {
+    note("Testing creation and deletion of git branches ...");
+
     my $weird = make_varname(16);
     my %theseopts = map { $_=> $opts->{$_} } keys %$opts;
     $theseopts{branch} = $weird;
@@ -62,13 +91,13 @@ ok($rv, "prepare_repository() returned true value");
     ok($self, "new() returned true value");
     isa_ok($self, 'Perl5::TestEachCommit',
         "object is a Perl5::TestEachCommit object");
-    
+
     $rv = $self->prepare_repository();
     ok($rv, "prepare_repository() returned true value");
 
     $rv = system(qq|git checkout blead|)
         and croak "Unable to checkout blead";
-    
+
     $rv = system(qq|git branch -d $weird|)
         and croak "Unable to delete branch '$weird'";
 }

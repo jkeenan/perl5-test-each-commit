@@ -261,6 +261,69 @@ sub report_plan {
     return 1;
 }
 
+=head2 C<get_commits()>
+
+=over 4
+
+=item * Purpose
+
+Get a list of SHAs of all commits being tested.
+
+=item * Arguments
+
+    my $lines = $self->get_commits();
+
+=item * Return Value
+
+Reference to an array holding list of all commits being tested.
+
+=item * Comment
+
+TK
+
+=back
+
+=cut
+
+sub get_commits {
+    my $self = shift;
+    my $origin_commit = $self->{start} . '^';
+    my $end_commit = $self->{end};
+    my @commits = `git rev-list --reverse ${origin_commit}..${end_commit}`;
+    chomp @commits;
+    return \@commits;
+}
+
+=head2 C<display_commits()>
+
+=over 4
+
+=item * Purpose
+
+Display a list of SHAs of all commits being tested.
+
+=item * Arguments
+
+    $self->display_commits();
+
+=item * Return Value
+
+Implicitly returns true value upon success.
+
+=item * Comment
+
+TK
+
+=back
+
+=cut
+
+sub display_commits {
+    my $self = shift;
+    #dd $self->get_commits();
+    say $_ for @{$self->get_commits()};
+    return 1;
+}
 
 =head1 BUGS
 
