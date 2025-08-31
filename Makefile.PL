@@ -2,8 +2,7 @@ use ExtUtils::MakeMaker;
 use strict;
 use warnings;
 
-# Call 'perldoc ExtUtils::MakeMaker' for details of how to influence
-# the contents of the Makefile that is written.
+my $mm_ver = ExtUtils::MakeMaker->VERSION;
 
 my %WriteMakefileArgs = (
     NAME                => 'Perl5::TestEachCommit',
@@ -12,22 +11,32 @@ my %WriteMakefileArgs = (
     ABSTRACT            => 'Test each commit in a pull request to Perl core',
     INSTALLDIRS         => ($] < 5.011 ? 'perl' : 'site'),
     PREREQ_PM           => {
-        'Test::Simple' => 0.44,
+        'Data::Dump' => 0,
+        'Carp'      => 0,
+        'File::Spec' => 0,
+        'File::Spec::Unix' => 0,
+        'Getopt::Long' => 0,
     },
-    ( eval { ExtUtils::MakeMaker->VERSION(6.46) } ? () : ( META_MERGE => {
+    ( $mm_ver < 6.63_03 ? 'BUILD_REQUIRES' : 'TEST_REQUIRES' ) => {
+        'Capture::Tiny' => 0,
+        'String::PerlIdentifier' => 0.06,
+        'Test::Simple' => 0.44,
+     },
+    LICENSE      => "perl",
+    ($mm_ver < 6.46 ? () : (META_MERGE => {
         'meta-spec' => { version => 2 },
         dynamic_config => 1,
-        #resources => {
-        #    homepage    => undef,
-        #    repository  => {
-        #        url         => undef,
-        #        web         => undef,
-        #        type        => undef,
-        #    },
-        #    bugtracker => {
-        #        web         => undef,
-        #    },
-        #},
+        resources => {
+            homepage => 'http://thenceforward.net/perl/modules/Perl5-TestEachCommit/',
+            repository => {
+                url => 'https://github.com/jkeenan/perl5-test-each-commit.git',
+                web => 'https://github.com/jkeenan/perl5-test-each-commit',
+                type => 'git',
+            },
+            bugtracker => {
+                web => 'https://github.com/jkeenan/perl5-test-each-commit/issues',
+            },
+        },
     })),
 );
 

@@ -9,7 +9,6 @@ use File::Spec::Functions;
 use Perl5::TestEachCommit::Util qw(
     process_command_line
 );
-#prepare_repository
 
 =encoding utf8
 
@@ -25,15 +24,8 @@ Perl5::TestEachCommit - Test each commit in a pull request to Perl core
 
 =head1 DESCRIPTION
 
-Stub documentation for this module was created by ExtUtils::ModuleMaker.
-It looks like the author of the extension was negligent enough
-to leave the stub unedited.
-
-Blah blah blah.
-
-=head1 USAGE
-
-TK
+This library is intended for use by people working to maintain the L<Perl core
+distribution|https://github.com/Perl/perl5>.
 
 =head1 METHODS
 
@@ -131,18 +123,6 @@ TK
 
 =cut
 
-#croak "Unable to locate workdir $workdir" unless -d $workdir;
-#chdir $workdir or croak "Unable to change to $workdir";
-#
-#my $grv = system(qq|
-#    git bisect reset && \
-#    git clean -dfxq && \
-#    git remote prune origin && \
-#    git fetch origin && \
-#    git checkout blead && \
-#    git rebase origin/blead
-#|) and croak "Unable to prepare $workdir for git activity";
-
 sub new {
     my ($class, $params) = @_;
     my $args = {};
@@ -192,6 +172,58 @@ sub new {
 
 #    croak "$args->{workdir} is not a git checkout"
 #        unless -d catdir($args->{workdir}, '.git');
+
+=head2 C<prepare_repository()>
+
+=over 4
+
+=item * Purpose
+
+Prepare the C<workdir> directory for F<git> operations, I<e.g.,> terminates
+any bisection in process, cleans the directory, fetches from origing, checks
+out blead, then checks out any non-blead branch provided in the C<branch>
+argument to C<new()>.
+
+=item * Arguments
+
+None.
+
+    my $rv = $self->prepare_repostory();
+
+=item * Return Value
+
+Returns true value upon success.
+
+=item * Comment
+
+TK
+
+=back
+
+=cut
+
+sub prepare_repository {
+    my $self = shift;
+
+    chdir $self->{workdir} or croak "Unable to change to $self->{workdir}";
+
+    my $grv = system(qq|
+        git bisect reset && \
+        git clean -dfxq && \
+        git remote prune origin && \
+        git fetch origin && \
+        git checkout blead && \
+        git rebase origin/blead
+    |) and croak "Unable to prepare $self->{workdir} for git activity";
+
+    if ($self->{branch} ne 'blead') {
+        system(qq|git checkout $self->{branch}|)
+            and croak "Unable to checkout branch '$self->{branch}'";
+    }
+    return 1;
+}
+
+
 
 =head1 BUGS
 
