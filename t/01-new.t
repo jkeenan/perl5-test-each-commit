@@ -4,9 +4,9 @@ use warnings;
 use Perl5::TestEachCommit;
 use File::Temp qw(tempfile tempdir);
 use File::Spec::Functions;
-use Test::More tests => 16;
+use Test::More tests => 20;
 use Data::Dump qw(dd pp);
-#use Capture::Tiny qw(capture_stderr);
+use Capture::Tiny qw(capture_stdout);
 
 my $opts = {
     branch => "blead",
@@ -118,3 +118,26 @@ note("Testing error conditions and defaults in new()");
     ok(! $self->{verbose}, "'verbose' defaulted to off");
 }
 
+note("Testing report_plan()");
+
+{
+    my $cnull = "sh ./Configure -des -Dusedevel 1>/dev/null";
+    my $mtpnull = "make test_prep 1>/dev/null";
+    my $mthnull = "make_test_harness 1>/dev/null";
+    my %theseopts = map { $_ => $opts->{$_} } keys %{$opts};
+    $theseopts{configure_command} = $cnull;
+    $theseopts{make_test_prep_command} = $mtpnull;
+    $theseopts{make_test_harness_command} = $mthnull;
+    my $self = Perl5::TestEachCommit->new( \%theseopts );
+    my $rv;
+    my $stdout = capture_stdout {
+        $rv = $self->report_plan();
+    };
+    ok($rv, "report_plan returned true value");
+    my @lines = split /\n/, $stdout;
+    for my $l (@lines[1..3]) {
+        like($l,
+            qr/command .*? 1>\/dev\/null/x,
+            "Got expected portion of report_plan output");
+    }
+}

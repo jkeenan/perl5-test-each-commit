@@ -17,18 +17,16 @@ else {
 }
 
 use Data::Dump qw(dd pp);
-#use Capture::Tiny qw(capture_stderr);
 
-# NOTE:  The tests in this depend on having a git checkout of the Perl core
-# distribution on disk.  We'll skip all if that is not the case.
-# If that is the case, then set the path to that checkout in the envvar
+# NOTE:  The tests in this file depend on having a git checkout of the Perl
+# core distribution on disk.  We'll skip all if that is not the case.  If that
+# is the case, then set the path to that checkout in the envvar
 # SECONDARY_CHECKOUT_DIR; example:
 #
 #   export SECONDARY_CHECKOUT_DIR=/home/username/gitwork/perl2
 #
-# Perl5::TestEachCommit will detect that and default
-# to it for 'workdir' -- which is why we'll be able to omit it from calls to
-# new() in this file.
+# Perl5::TestEachCommit will detect that and default to it for 'workdir' --
+# which is why we'll be able to omit it from calls to new() in this file.
 
 my $opts = {
     #workdir => "/tmp",

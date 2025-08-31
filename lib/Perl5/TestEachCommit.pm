@@ -223,6 +223,43 @@ sub prepare_repository {
     return 1;
 }
 
+=head2 C<report_plan()>
+
+=over 4
+
+=item * Purpose
+
+Display most important configuration choices.
+
+=item * Arguments
+
+    $self->report_plan();
+
+=item * Return Value
+
+Implicitly returns true value upon success.
+
+=item * Comment
+
+TK
+
+=back
+
+=cut
+
+sub report_plan {
+    my $self = shift;
+    say "branch:                    $self->{branch}";
+    say "configure_command:         $self->{configure_command}";
+    say "make_test_prep_command:    $self->{make_test_prep_command}";
+    if ($self->{skip_test_harness}) {
+        say "Skipping 'make test_harness'";
+    }
+    else {
+        say "make_test_harness_command: $self->{make_test_harness_command}";
+    }
+    return 1;
+}
 
 
 =head1 BUGS
