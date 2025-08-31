@@ -10,6 +10,11 @@ my %WriteMakefileArgs = (
     AUTHOR              => 'James E Keenan (jkeenan@cpan.org)',
     ABSTRACT            => 'Test each commit in a pull request to Perl core',
     INSTALLDIRS         => ($] < 5.011 ? 'perl' : 'site'),
+    test                => {
+        TESTS => ($ENV{PERL_AUTHOR_TESTING}
+            ? "t/*.t xt/*.t"
+            : "t/*.t")
+    },
     PREREQ_PM           => {
         'Data::Dump' => 0,
         'Carp'      => 0,

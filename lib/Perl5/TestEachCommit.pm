@@ -336,12 +336,13 @@ assuming we have not elected to C<skip_test_harness> -- testing each commit.
 
 =item * Arguments
 
-    my $results_ref = $self->examine_all_commits();
+    $self->examine_all_commits();
 
 =item * Return Value
 
-Reference to an array holding hash references, one hashref per commit.  Each
-hashref reports the commit's SHA and its score (see C<examine_one_commit>).
+For possible future chaining, returns the Perl5::TestEachCommit object, which
+now includes the results of the examination of each commit in the selected
+range.
 
 =item * Comment
 
@@ -353,16 +354,76 @@ TK
 
 sub examine_all_commits {
     my $self = shift;
-    my @results = ();
     $self->{results} = [];
     for my $c (@{ $self->get_commits }) {
-        say STDERR "AAA: <$c>";
-        # my $score_ref = $self->examine_one_commit($c);
-        # push @{$self->{results}}, $score_ref;
+        $self->examine_one_commit($c);
     }
     return $self;
 }
 
+=head2 C<get_results()>
+
+=over 4
+
+=item * Purpose
+
+Get a list of the SHA and score for each commit.
+
+=item * Arguments
+
+    my $results_ref = $self->get_results();
+
+=item * Return Value
+
+Reference to an array holding a hashref for each commit.  Each such hashref
+has two elements: C<commit> and C<score>.  (See C<examine_one_commit>.)
+
+=item * Comment
+
+TK
+
+=back
+
+=cut
+
+sub get_results {
+    my $self = shift;
+    return $self->{results}; # aref
+}
+
+=head2 C<display_results()>
+
+=over 4
+
+=item * Purpose
+
+Pretty-print to STDOUT the results obtained via C<get_results()>.
+
+=item * Arguments
+
+    $self->display_results();
+
+=item * Return Value
+
+Implicitly returns a true value upon success.
+
+=item * Comment
+
+TK
+
+=back
+
+=cut
+
+sub display_results {
+    my $self = shift;
+    say ' ' x 17, 'commit', ' ' x 17, ' ' x 3, 'score';
+    say '-' x 48;
+    for my $el (@{$self->{results}}) {
+        say $el->{commit}, ' |   ', $el->{score};
+    }
+    return 1;
+}
 
 =head2 C<examine_one_commit()>
 
