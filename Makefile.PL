@@ -1,6 +1,12 @@
 use ExtUtils::MakeMaker;
 use strict;
 use warnings;
+use Devel::CheckBin;
+check_bin('git');
+if ($^O =~ m/mswin32/i) {
+    print STDERR "NA: Not yet tested on Windows\n";
+    exit 0;
+}
 
 my $mm_ver = ExtUtils::MakeMaker->VERSION;
 
@@ -10,10 +16,15 @@ my %WriteMakefileArgs = (
     AUTHOR              => 'James E Keenan (jkeenan@cpan.org)',
     ABSTRACT            => 'Test each commit in a pull request to Perl core',
     INSTALLDIRS         => ($] < 5.011 ? 'perl' : 'site'),
+    MIN_PERL_VERSION    => '5.14.0',
     test                => {
         TESTS => ($ENV{PERL_AUTHOR_TESTING}
             ? "t/*.t xt/*.t"
             : "t/*.t")
+    },
+    CONFIGURE_REQUIRES => {
+        'ExtUtils::MakeMaker' => 0,
+        'Devel::CheckBin' => 0,
     },
     PREREQ_PM           => {
         'Data::Dump' => 0,
