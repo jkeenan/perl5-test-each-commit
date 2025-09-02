@@ -20,7 +20,7 @@ our @EXPORT_OK = qw(
 
 =head1 NAME
 
-Perl5::TestEachCommit::Util - helper functions for Pod-Html
+Perl5::TestEachCommit::Util - helper functions for Perl5::TestEachCommit
 
 =head1 SUBROUTINES
 
@@ -29,8 +29,6 @@ Perl5::TestEachCommit::Util - helper functions for Pod-Html
 Process command-line switches (options).  Returns a reference to a hash.  Will
 provide usage message if C<--help> switch is present or if parameters are
 invalid.
-
-Calling this subroutine may modify C<@ARGV>.
 
 =cut
 

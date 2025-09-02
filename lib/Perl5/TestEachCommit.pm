@@ -6,9 +6,9 @@ $VERSION = eval $VERSION;
 use Carp;
 use Data::Dump ( qw| dd pp| );
 use File::Spec::Functions;
-use Perl5::TestEachCommit::Util qw(
-    process_command_line
-);
+#use Perl5::TestEachCommit::Util qw(
+#    process_command_line
+#);
 
 =encoding utf8
 
@@ -24,8 +24,8 @@ Perl5::TestEachCommit - Test each commit in a pull request to Perl core
 
 =head1 DESCRIPTION
 
-This library is intended for use by people working to maintain the L<Perl core
-distribution|https://github.com/Perl/perl5>.
+This library is intended for use by people working to maintain the
+L<Perl core distribution|https://github.com/Perl/perl5>.
 
 =head1 METHODS
 
@@ -51,8 +51,8 @@ pairs:
 
 String holding path to a directory which is a F<git> checkout of the Perl core
 distribution.  If you have previously set an environmental variable
-C<SECONDARY_CHECKOUT_DIR> to such a directory, that will be used; otherwise,
-path must be specified. (MODIFY)
+C<SECONDARY_CHECKOUT_DIR> holding the path to such a directory, that will be
+used; otherwise, path must be specified.
 
 * C<resultsdir>
 
