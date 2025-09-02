@@ -203,7 +203,7 @@ sub prepare_repository {
     return 1;
 }
 
-=head2 C<report_plan()>
+=head2 C<display_plan()>
 
 =over 4
 
@@ -213,7 +213,7 @@ Display most important configuration choices.
 
 =item * Arguments
 
-    $self->report_plan();
+    $self->display_plan();
 
 =item * Return Value
 
@@ -232,7 +232,7 @@ The output will look like this:
 
 =cut
 
-sub report_plan {
+sub display_plan {
     my $self = shift;
     say "branch:                    $self->{branch}";
     say "configure_command:         $self->{configure_command}";

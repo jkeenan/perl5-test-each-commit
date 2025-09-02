@@ -93,7 +93,7 @@ note("Testing error conditions and defaults in new()");
     ok(! $self->{verbose}, "'verbose' defaulted to off");
 }
 
-note("Testing report_plan()");
+note("Testing display_plan()");
 
 {
     my $cnull = "sh ./Configure -des -Dusedevel 1>/dev/null";
@@ -106,13 +106,13 @@ note("Testing report_plan()");
     my $self = Perl5::TestEachCommit->new( \%theseopts );
     my $rv;
     my $stdout = capture_stdout {
-        $rv = $self->report_plan();
+        $rv = $self->display_plan();
     };
-    ok($rv, "report_plan returned true value");
+    ok($rv, "display_plan returned true value");
     my @lines = split /\n/, $stdout;
     for my $l (@lines[1..3]) {
         like($l,
             qr/command .*? 1>\/dev\/null/x,
-            "Got expected portion of report_plan output");
+            "Got expected portion of display_plan output");
     }
 }
