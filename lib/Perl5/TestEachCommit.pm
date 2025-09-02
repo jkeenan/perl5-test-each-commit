@@ -6,9 +6,6 @@ $VERSION = eval $VERSION;
 use Carp;
 use Data::Dump ( qw| dd pp| );
 use File::Spec::Functions;
-#use Perl5::TestEachCommit::Util qw(
-#    process_command_line
-#);
 
 =encoding utf8
 
@@ -73,33 +70,36 @@ In addition, that hash B<may> include the following key-value pairs:
 * C<branch>
 
 F<git> branch which must exist and be available for C<git checkout> in the
-directory specified by C<workdir>.  Defalults to C<blead>.
+directory specified by C<workdir>.  Defaults to C<blead>.
 
 * C<configure_command>
 
-String holding arguments to be passed to F<./Configure>.
-Defaults to C<sh ./Configure -des -Dusedevel>.
+String holding arguments to be passed to F<./Configure>.  Defaults to C<sh
+./Configure -des -Dusedevel>.  Add < 1<Egt>/dev/null> to that string if you
+don't need voluminous output to C<STDOUT>.
 
 * C<make_test_prep_command>
 
-String holding arguments to be passed to F<make test_prep>.
-Defaults to C<make test_prep>.
+String holding arguments to be passed to F<make test_prep>.  Defaults to
+C<make test_prep>.  Add < 1<Egt>/dev/null> to that string if you don't need
+voluminous output to C<STDOUT>.
 
 * C<make_test_harness_command>
 
-String holding arguments to be passed to F<make test_harness>.
-Defaults to C<make test_harness>.
+String holding arguments to be passed to F<make test_harness>.  Defaults to
+C<make test_harness>.  Add < 1<Egt>/dev/null> to that string if you don't need
+voluminous output to C<STDOUT>.
 
 * C<skip_test_harness>
 
 True/false value.  Defaults to false.  If true, when proceeding through a
 series of commits in a branch or pull request, the C<make test_harness> stage
-is skipped on the assumption that any significant failures are going to appear
-in the first two stages.
+will be skipped on the assumption that any significant failures are going to
+appear in the first two stages.
 
 * C<verbose>
 
-True/false value.  Defaults to false.  If true, prints to STDOUT a summary of
+True/false value.  Defaults to false.  If true, prints to C<STDOUT> a summary of
 switches in use and commits being tested.
 
 =back
@@ -107,10 +107,6 @@ switches in use and commits being tested.
 =item * Return Value
 
 Perl5::TestEachCommit object (blessed hash reference).
-
-=item * Comment
-
-TK
 
 =back
 
@@ -169,7 +165,7 @@ sub new {
 
 Prepare the C<workdir> directory for F<git> operations, I<e.g.,> terminates
 any bisection in process, cleans the directory, fetches from origing, checks
-out blead, then checks out any non-blead branch provided in the C<branch>
+out blead, then checks out any non-blead branch indicated in the C<branch>
 argument to C<new()>.
 
 =item * Arguments
@@ -181,10 +177,6 @@ None.
 =item * Return Value
 
 Returns true value upon success.
-
-=item * Comment
-
-TK
 
 =back
 
@@ -229,7 +221,12 @@ Implicitly returns true value upon success.
 
 =item * Comment
 
-TK
+The output will look like this:
+
+    branch:                    blead
+    configure_command:         sh ./Configure -des -Dusedevel 1>/dev/null
+    make_test_prep_command:    make test_prep 1>/dev/null
+    make_test_harness_command: make_test_harness 1>/dev/null
 
 =back
 
@@ -265,10 +262,6 @@ Get a list of SHAs of all commits being tested.
 
 Reference to an array holding list of all commits being tested.
 
-=item * Comment
-
-TK
-
 =back
 
 =cut
@@ -300,7 +293,11 @@ Implicitly returns true value upon success.
 
 =item * Comment
 
-TK
+The output will look like this:
+
+    c9cd2e0cf4ad570adf68114c001a827190cb2ee9
+    79b32d926ef5961b4946ebe761a7058cb235f797
+    0dfa8ac113680e6acdef0751168ab231b9bf842c
 
 =back
 
@@ -385,7 +382,7 @@ sub get_results {
 
 =item * Purpose
 
-Pretty-print to STDOUT the results obtained via C<get_results()>.
+Pretty-print to C<STDOUT> the results obtained via C<get_results()>.
 
 =item * Arguments
 
