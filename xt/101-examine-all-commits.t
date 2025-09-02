@@ -41,7 +41,6 @@ my $opts = {
     configure_command => "sh ./Configure -des -Dusedevel 1>/dev/null",
     make_test_prep_command => "make test_prep 1>/dev/null",
     make_test_harness_command => "make test_harness 1>/dev/null",
-    resultsdir => "/tmp",
     skip_test_harness => 1,
     verbose => 1,
 };

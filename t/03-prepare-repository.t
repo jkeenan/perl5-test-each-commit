@@ -36,7 +36,6 @@ my $opts = {
     #configure_command => "sh ./Configure -des -Dusedevel",
     #make_test_harness_command => "make test_harness",
     #make_test_prep_command => "make test_prep",
-    resultsdir => "/tmp",
     skip_test_harness => 1,
     verbose => 1,
 };

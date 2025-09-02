@@ -54,13 +54,6 @@ distribution.  If you have previously set an environmental variable
 C<SECONDARY_CHECKOUT_DIR> holding the path to such a directory, that will be
 used; otherwise, path must be specified.
 
-* C<resultsdir>
-
-String holding path to a directory in which any non-temporary files generated
-by use of this library can be created.  If you have previously set an
-environmental variable C<P5P_DIR> to such a directory, that will be used;
-otherwise, path must be specified. (MODIFY)
-
 * C<start>
 
 String holding SHA of the first commit in the series on which you wish
@@ -140,11 +133,6 @@ sub new {
     $args->{workdir} //= ($ENV{SECONDARY_CHECKOUT_DIR} || '');
     -d $args->{workdir} or croak "Unable to locate workdir in $args->{workdir}";
     $data{workdir} = delete $args->{workdir};
-
-    $args->{resultsdir} //= ($ENV{P5P_DIR} || '');
-    -d $args->{resultsdir}
-        or croak "Unable to locate resultsdir in $args->{resultsdir}";
-    $data{resultsdir} = delete $args->{resultsdir};
 
     $data{branch} = $args->{branch} ? delete $args->{branch} : 'blead';
     $data{configure_command} = $args->{configure_command}

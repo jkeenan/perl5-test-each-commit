@@ -5,21 +5,20 @@ use Perl5::TestEachCommit::Util qw(
     process_command_line
     usage
 );
-use Test::More tests => 15;
+use Test::More tests => 14;
 use Data::Dump qw(dd pp);
 use Capture::Tiny qw(capture_stderr);
 
 my $opts = process_command_line();
 is(ref($opts), 'HASH', "process_command_line returned a hashref");
 
-my ($workdir, $branch, $resultsdir, $start, $end, $verbose,
+my ($workdir, $branch, $start, $end, $verbose,
     $configure_command, $make_test_prep_command,
     $make_test_harness_command, $skip_test_harness);
 
 {
     $workdir     = '/tmp';
     $branch      = 'blead';
-    $resultsdir  = '/tmp';
     $start       = '001';
     $end         = '002';
     $verbose     = '';
@@ -31,7 +30,6 @@ my ($workdir, $branch, $resultsdir, $start, $end, $verbose,
     local @ARGV = (
         workdir     => $workdir,
         branch      => $branch,
-        resultsdir  => $resultsdir,
         start       => $start,
         end         => $end,
         verbose     => $verbose,
@@ -44,7 +42,6 @@ my ($workdir, $branch, $resultsdir, $start, $end, $verbose,
     is(ref($opts), 'HASH', "process_command_line returned a hashref");
     is($opts->{workdir}, $workdir, "Got expected workdir");
     is($opts->{branch}, $branch, "Got expected branch");
-    is($opts->{resultsdir}, $resultsdir, "Got expected resultsdir");
     is($opts->{start}, $start, "Got expected start");
     is($opts->{end}, $end, "Got expected end");
     ok(! $opts->{verbose}, "verbose not selected");
