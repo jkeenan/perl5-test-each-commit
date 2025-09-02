@@ -17,12 +17,49 @@ Perl5::TestEachCommit - Test each commit in a pull request to Perl core
 
     use Perl5::TestEachCommit;
 
-    my $self = Perl5::TestEachCommit->new();
+    $self = Perl5::TestEachCommit->new();
+
+    $self->prepare_repository();
+    $self->display_plan();
+    $self->get_commits();
+    $self->display_commits();
+    $self->examine_all_commits();
+    $self->get_results();
+    $self->display_results();
 
 =head1 DESCRIPTION
 
 This library is intended for use by people working to maintain the
 L<Perl core distribution|https://github.com/Perl/perl5>.
+
+Commits to C<blead>, the main development branch in the Perl repository, are
+most often done by pull requests.  Most such p.r.s consist of a single commit,
+but commits of forty or eighty are not unknown.  A continuous integration
+system (CI) ensures that each p.r. is configured, built and tested on
+submission and on subsequent modifications.  That CI system, however, only
+executes that cycle on the *final* commit in each p.r.  It cannot detect any
+failure in a *non-final* commit.  This library provides a way to test each
+commit in the p.r. to the same extent that the CI system tests the final
+commit.
+
+Why is this important?  Suppose that we have a pull request that consists of 5
+commits.  In commit 3 the developer makes an error which causes F<make> to
+fail.  The developer notices that and corrects the error in commit 4.  Commit
+5 configures, builds and tests satisfactorily, so the CI system gives the p.r.
+as a whole a PASS.  The committer uses that PASS as the basis for approving a
+merge of the branch into C<blead>.
+
+    Commit  Configure   Build       Test
+    ------------------------------------
+    1abcd       X         X           X
+    2efab       X         X           X
+    3cdef       X         0           -
+    4dcba       X         X           X
+    5fedc       X         X           X
+
+If, for any reason (*e.g.,* bisection), some other developer in the future
+needs to say F<git checkout 3cdef>, they will discover that at that commit the
+build was actually broken.
 
 =head1 METHODS
 
@@ -153,9 +190,6 @@ sub new {
     map { ! exists $data{$_} ?  $data{$_} = $args->{$_} : '' } keys %{$args};
     return bless \%data, $class;
 }
-
-#    croak "$args->{workdir} is not a git checkout"
-#        unless -d catdir($args->{workdir}, '.git');
 
 =head2 C<prepare_repository()>
 
@@ -329,10 +363,6 @@ For possible future chaining, returns the Perl5::TestEachCommit object, which
 now includes the results of the examination of each commit in the selected
 range.
 
-=item * Comment
-
-TK
-
 =back
 
 =cut
@@ -363,10 +393,6 @@ Get a list of the SHA and score for each commit.
 Reference to an array holding a hashref for each commit.  Each such hashref
 has two elements: C<commit> and C<score>.  (See C<examine_one_commit>.)
 
-=item * Comment
-
-TK
-
 =back
 
 =cut
@@ -394,7 +420,13 @@ Implicitly returns a true value upon success.
 
 =item * Comment
 
-TK
+The output will look like this:
+
+                    commit                    score
+   ------------------------------------------------
+   c9cd2e0cf4ad570adf68114c001a827190cb2ee9 |   2
+   79b32d926ef5961b4946ebe761a7058cb235f797 |   1
+   0dfa8ac113680e6acdef0751168ab231b9bf842c |   2
 
 =back
 
