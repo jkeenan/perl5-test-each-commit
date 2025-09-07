@@ -4,4 +4,6 @@ Revision history for Perl module Perl5::TestEachCommit
     - original version; created by ExtUtils::ModuleMaker 0.63
     - CPAN release: Sep 02 2025
 
+0.02 Tue Sep 2 17:44:40 2025
+    - Ensure that git is present before building
 
