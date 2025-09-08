@@ -2,6 +2,7 @@ TODO list for Perl module Perl5::TestEachCommit
 
 Decide whether we should offer a method which, upon completion of work, will
 automatically or optionally reset the workdir to a clean checkout of blead.
+DONE Sep 08: cleanup_repository() added in 0a2687467f.
 
 Decide whether to set PERL_CORE=1 so that all tests are run on the assumption
 that we're working within the Perl core distribution.  This would, I believe,
