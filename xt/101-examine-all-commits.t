@@ -19,7 +19,7 @@ elsif (! $ENV{PERL_AUTHOR_TESTING}) {
     plan skip_all => 'Lengthy test; set PERL_AUTHOR_TESTING to run';
 }
 else {
-    plan tests => 13;
+    plan tests => 14;
     #plan 'no_plan';
 }
 
