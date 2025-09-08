@@ -491,6 +491,9 @@ Called internally within C<examine_all_commits()>.
 sub examine_one_commit {
     my ($self, $c) = @_;
     chdir $self->{workdir} or croak "Unable to change to $self->{workdir}";
+    # So that ./Configure, make test_prep and make_test_harness all behave
+    # as they typically do in a git checkout.
+    local $ENV{PERL_CORE} = 1;
 
     my $rv = system(qq|git clean -dfxq|) and croak "Unable to git-clean";
     $rv = system(qq|git checkout $c|) and croak "Unable to git-checkout $c";
@@ -502,7 +505,6 @@ sub examine_one_commit {
     if ($rv) {
         carp "Unable to configure at $c";
         push @{$self->{results}}, { commit => $c, score => $commit_score };
-#        next COMMIT;
         return;
     }
     else {
@@ -513,7 +515,6 @@ sub examine_one_commit {
         if ($rv) {
             carp "Unable to make_test_prep at $c";
             push @{$self->{results}}, { commit => $c, score => $commit_score };
-#            next COMMIT;
             return;
         }
         else {
