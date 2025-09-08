@@ -101,6 +101,9 @@ my $opts = {
         like($datum, qr/^[a-f0-9]{40}\s\|\s{3}[0-3]/,
             "Got expected data from display_results");
     }
+
+    ok($self->cleanup_repository(),
+        "cleanup_repository() returned true value");
 }
 
 

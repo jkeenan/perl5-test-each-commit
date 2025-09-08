@@ -152,6 +152,7 @@ Perl5::TestEachCommit object (blessed hash reference).
 sub new {
     my ($class, $params) = @_;
     my $args = {};
+
     for my $k (keys %{$params}) { $args->{$k} = $params->{$k}; }
     my %data;
     croak "Must supply SHA of first commit to be studied to 'start'"
@@ -534,6 +535,45 @@ sub examine_one_commit {
             push @{$self->{results}}, { commit => $c, score => $commit_score };
         }
     }
+}
+
+=head2 C<cleanup_repository()>
+
+=over 4
+
+=item * Purpose
+
+Clean up the repository in the directory designated by C<workdir>.
+
+=item * Arguments
+
+    $self->cleanup_respository();
+
+=item * Return Value
+
+Implicitly returns a true value upon success.
+
+=item * Comment
+
+Performs a F<git clean> and F<git checkout blead> but does not do any fetching
+from origin or updating of C<blead>.
+
+=back
+
+=cut
+
+sub cleanup_repository {
+    my $self = shift;
+
+    chdir $self->{workdir} or croak "Unable to change to $self->{workdir}";
+
+    my $grv = system(qq|
+        git bisect reset && \
+        git clean -dfxq && \
+        git checkout blead
+    |) and croak "Unable to clean $self->{workdir} after git activity";
+
+    return 1;
 }
 
 =head1 BUGS

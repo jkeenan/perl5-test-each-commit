@@ -14,9 +14,13 @@ File a P5P issue or p.r. to eliminate this extraneous STDERR output I'm noticing
     ext/XS-APItest/APItest.xs
     1227:  fprintf(stderr, "TODO: examine kid %p (optype=%s)\n", kid, PL_op_name[kid->op_type]);
 
+UPDATE (Sep 08): @leonerd has agreed to this and has it in a pending p.r.
+
 Write a 'dryrun' option for process_command_line which will construct the
 object, prepare the repository (but then it wouldn't be completely dry, would
-it?), display the plan, display the commits and exit.
+it?), display the plan, display the commits and exit.  BUT:  should this be an
+option for process_command_line() or for a program (e.g.,
+'test-each-commit-p5p' that creates a P5::TEC object and methods?
 
 Write a program which will appear under scripts in the tarball and be
 installable under /usr/local/bin which will call
