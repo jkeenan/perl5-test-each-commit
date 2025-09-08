@@ -8,6 +8,7 @@ Decide whether to set PERL_CORE=1 so that all tests are run on the assumption
 that we're working within the Perl core distribution.  This would, I believe,
 eliminate some output from testing Term::Tables which is cluttering up the
 terminal.
+DONE Sep 08: added in c9e2eb9d21.
 
 File a P5P issue or p.r. to eliminate this extraneous STDERR output I'm noticing in runs:
 
@@ -42,4 +43,3 @@ to display the scores of all commits.  That suggests we will want to offer the
 option of logging the output somewhere -- which in turn suggests we may want
 to resurrect the 'resultsdir' command-line option.
 
-output somewhere
