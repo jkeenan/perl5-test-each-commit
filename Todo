@@ -1,24 +1,5 @@
 TODO list for Perl module Perl5::TestEachCommit
 
-Decide whether we should offer a method which, upon completion of work, will
-automatically or optionally reset the workdir to a clean checkout of blead.
-DONE Sep 08: cleanup_repository() added in 0a2687467f.
-
-Decide whether to set PERL_CORE=1 so that all tests are run on the assumption
-that we're working within the Perl core distribution.  This would, I believe,
-eliminate some output from testing Term::Tables which is cluttering up the
-terminal.
-DONE Sep 08: added in c9e2eb9d21.
-
-File a P5P issue or p.r. to eliminate this extraneous STDERR output I'm noticing in runs:
-
-    $ ack 'TODO: examine kid' .
-    ext/XS-APItest/APItest.xs
-    1227:  fprintf(stderr, "TODO: examine kid %p (optype=%s)\n", kid, PL_op_name[kid->op_type]);
-
-UPDATE (Sep 08): @leonerd has agreed to this and has it in a pending p.r.
-UPDATE (Sep 09): He did so in 4521b3ce4a6347e5b77358c28b615e08987c60e1.
-
 Write a 'dryrun' option for process_command_line which will construct the
 object, prepare the repository (but then it wouldn't be completely dry, would
 it?), display the plan, display the commits and exit.  BUT:  should this be an
