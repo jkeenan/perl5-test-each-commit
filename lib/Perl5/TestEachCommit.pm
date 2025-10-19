@@ -61,6 +61,15 @@ If, for any reason (*e.g.,* bisection), some other developer in the future
 needs to say F<git checkout 3cdef>, they will discover that at that commit the
 build was actually broken.
 
+=head2 Additional Functionality
+
+As of version 0.06, this distribution now provides the functionality to
+analyze breakage at the F<miniperl> level.  If it is known (or suspected) that
+tests will break during F<make minitest_prep> or F<make minitest> then runtime
+can be considerably reduced from the more typical case where breakage occurs
+during F<make test_prep> or F<make test_harness>.  However, the two cases
+cannot be mixed.
+
 =head1 METHODS
 
 =head2 C<new()>
@@ -134,6 +143,22 @@ series of commits in a branch or pull request, the C<make test_harness> stage
 will be skipped on the assumption that any significant failures are going to
 appear in the first two stages.
 
+* C<make_minitest_prep_command>
+
+String holding arguments to be passed to F<make minitest_prep>.  Defaults to
+C<make minitest_prep>.  Add < 1<Egt>/dev/null> to that string if you don't
+need voluminous output to C<STDOUT>. B<Note:> If this key-value pair is passed
+to C<new()>, then any value passed to C<make_test_prep_command> or
+C<make_test_harness_command> is ignored.
+
+* C<make_minitest_command>
+
+String holding arguments to be passed to F<make minitest>.  Defaults to C<make
+minitest>.  Add < 1<Egt>/dev/null> to that string if you don't need voluminous
+output to C<STDOUT>.  B<Note:> If this key-value pair is passed to C<new()>,
+then any value passed to C<make_test_prep_command> or
+C<make_test_harness_command> is ignored.
+
 * C<verbose>
 
 True/false value.  Defaults to false.  If true, prints to C<STDOUT> a summary of
@@ -173,12 +198,24 @@ sub new {
     $data{configure_command} = $args->{configure_command}
         ? delete $args->{configure_command}
         : 'sh ./Configure -des -Dusedevel';
+
     $data{make_test_prep_command} = $args->{make_test_prep_command}
         ? delete $args->{make_test_prep_command}
         : 'make test_prep';
     $data{make_test_harness_command} = $args->{make_test_harness_command}
         ? delete $args->{make_test_harness_command}
         : 'make test_harness';
+
+    if ($args->{make_minitest_prep_command} or $args->{make_minitest_command}) {
+        delete $data{make_test_prep_command};
+        delete $data{make_test_harness_command};
+        $data{make_minitest_prep_command} = $args->{make_minitest_prep_command}
+            ? delete $args->{make_minitest_prep_command}
+            : 'make minitest_prep';
+        $data{make_minitest_command} = $args->{make_minitest_command}
+            ? delete $args->{make_minitest_command}
+            : 'make minitest';
+    }
 
     $data{skip_test_harness} = defined $args->{skip_test_harness}
         ? delete $args->{skip_test_harness}
