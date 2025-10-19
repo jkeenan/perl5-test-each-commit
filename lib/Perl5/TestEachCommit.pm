@@ -544,7 +544,7 @@ sub examine_one_commit {
     undef $rv;
     my $commit_score = 0;
 
-    say STDERR "Configuring $c" if $self->{verbose};
+    say STDERR "Configuring at $c" if $self->{verbose};
     $rv = system($self->{configure_command});
     if ($rv) {
         carp "Unable to configure at $c";
@@ -574,6 +574,7 @@ sub examine_one_commit {
                 else {
                     $commit_score++;
                 }
+                push @{$self->{results}}, { commit => $c, score => $commit_score };
             }
         }
         else {
@@ -601,8 +602,8 @@ sub examine_one_commit {
                         $commit_score++;
                     }
                 }
+                push @{$self->{results}}, { commit => $c, score => $commit_score };
             }
-            push @{$self->{results}}, { commit => $c, score => $commit_score };
         }
     }
 }
