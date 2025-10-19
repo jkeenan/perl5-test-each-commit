@@ -21,6 +21,11 @@ Perl5::TestEachCommit::Util - helper functions for Perl5::TestEachCommit
 
 Process command-line switches (options).  Returns a reference to a hash.
 
+B<Note:> This function is little more than a wrapper around
+C<Getopt::Long::GetOptions()>.  As such, it performs no evaluation of any
+interactions among the various command-line switches.  That evaluation is
+deferred until C<Perl5::TestEachCommit::new() is called.
+
 =cut
 
 sub process_command_line {
