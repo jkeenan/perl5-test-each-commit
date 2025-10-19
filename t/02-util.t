@@ -112,8 +112,8 @@ note("Mini case: make minitest_prep and make minitest");
     is($opts->{start}, $start, "Got expected start");
     is($opts->{configure_command}, $configure_command,
         "Got expected configure_command");
-    ok(! $opts->{make_test_prep_command}, "Not running make test_prep");
-    ok(! $opts->{make_test_harness_command}, "Not running make test_harness");
+    ok(! $opts->{make_test_prep_command}, "make test_prep not selected");
+    ok(! $opts->{make_test_harness_command}, "make test_harness not selected");
     ok(! $opts->{skip_test_harness}, "skip_test_harness not selected");
     is($opts->{make_minitest_prep_command}, $make_minitest_prep_command,
         "Got expected make_minitest_prep_command");
