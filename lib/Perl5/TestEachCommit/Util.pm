@@ -36,6 +36,8 @@ sub process_command_line {
         make_test_harness_command
         skip_test_harness
         verbose
+        make_minitest_prep_command
+        make_minitest_command
     | );
 
     my $result = GetOptions(
@@ -48,6 +50,8 @@ sub process_command_line {
         "make_test_harness_command=s" =>     \$opts{make_test_harness_command},
         "skip_test_harness" =>     \$opts{skip_test_harness},
         "verbose" =>     \$opts{verbose},
+        "make_minitest_prep_command=s" =>     \$opts{make_minitest_prep_command},
+        "make_minitest_command=s" =>     \$opts{make_minitest_command},
     ) or croak "Error in command line arguments";
 
     return \%opts;
