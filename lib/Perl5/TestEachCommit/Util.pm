@@ -19,9 +19,7 @@ Perl5::TestEachCommit::Util - helper functions for Perl5::TestEachCommit
 
 =head2 C<process_command_line()>
 
-Process command-line switches (options).  Returns a reference to a hash.  Will
-provide usage message if C<--help> switch is present or if parameters are
-invalid.
+Process command-line switches (options).  Returns a reference to a hash.
 
 =cut
 
