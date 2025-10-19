@@ -48,3 +48,8 @@ test correctly and merge satisfactorily, but a checkout at commit A will still
 be graded FAIL.  The only way to avoid this is for guts programmers to run
 'make test_porting' after each commit.
 
+* It sometimes happens that within a series of commits (e.g., a pull request)
+test failures can be detected merely by running 'make minitest', obviating the
+need for a full 'make test_prep' or 'make test_harness'.  We need to allow for
+this possibility with a 'make_minitest_command' option.
+
