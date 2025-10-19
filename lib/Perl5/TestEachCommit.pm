@@ -307,14 +307,20 @@ The output will look like this:
 
 sub display_plan {
     my $self = shift;
-    say "branch:                    $self->{branch}";
-    say "configure_command:         $self->{configure_command}";
-    say "make_test_prep_command:    $self->{make_test_prep_command}";
-    if ($self->{skip_test_harness}) {
-        say "Skipping 'make test_harness'";
+    say "branch:                        $self->{branch}";
+    say "configure_command:             $self->{configure_command}";
+    if ($self->{make_minitest_prep_command}) {
+        say "make_minitest_prep_command:    $self->{make_minitest_prep_command}";
+        say "make_minitest_command:         $self->{make_minitest_command}";
     }
     else {
-        say "make_test_harness_command: $self->{make_test_harness_command}";
+        say "make_test_prep_command:        $self->{make_test_prep_command}";
+        if ($self->{skip_test_harness}) {
+            say "Skipping 'make test_harness'";
+        }
+        else {
+            say "make_test_harness_command: $self->{make_test_harness_command}";
+        }
     }
     return 1;
 }
@@ -548,27 +554,52 @@ sub examine_one_commit {
     else {
         $commit_score++;
 
-        say STDERR "Building $c" if $self->{verbose};
-        $rv = system($self->{make_test_prep_command});
-        if ($rv) {
-            carp "Unable to make_test_prep at $c";
-            push @{$self->{results}}, { commit => $c, score => $commit_score };
-            return;
-        }
-        else {
-            $commit_score++;
+        if ($self->{make_minitest_prep_command}) {
 
-            if ($self->{skip_test_harness}) {
-                say STDERR "Skipping 'make test_harness'" if $self->{verbose};
+            say STDERR "Building miniperl at $c" if $self->{verbose};
+            $rv = system($self->{make_minitest_prep_command});
+            if ($rv) {
+                carp "Unable to make_minitest_prep at $c";
+                push @{$self->{results}}, { commit => $c, score => $commit_score };
+                return;
             }
             else {
-                say STDERR "Testing $c" if $self->{verbose};
-                $rv = system($self->{make_test_harness_command});
+                $commit_score++;
+
+                say STDERR "Running minitest at $c" if $self->{verbose};
+                $rv = system($self->{make_minitest_command});
                 if ($rv) {
-                    carp "Unable to make_test_harness at $c";
+                    carp "Unable to make_minitest at $c";
                 }
                 else {
                     $commit_score++;
+                }
+            }
+        }
+        else {
+
+            say STDERR "Building $c" if $self->{verbose};
+            $rv = system($self->{make_test_prep_command});
+            if ($rv) {
+                carp "Unable to make_test_prep at $c";
+                push @{$self->{results}}, { commit => $c, score => $commit_score };
+                return;
+            }
+            else {
+                $commit_score++;
+
+                if ($self->{skip_test_harness}) {
+                    say STDERR "Skipping 'make test_harness'" if $self->{verbose};
+                }
+                else {
+                    say STDERR "Testing $c" if $self->{verbose};
+                    $rv = system($self->{make_test_harness_command});
+                    if ($rv) {
+                        carp "Unable to make_test_harness at $c";
+                    }
+                    else {
+                        $commit_score++;
+                    }
                 }
             }
             push @{$self->{results}}, { commit => $c, score => $commit_score };
