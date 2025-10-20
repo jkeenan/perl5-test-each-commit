@@ -65,7 +65,7 @@ build was actually broken.
 
 As of version 0.06, this distribution now provides the functionality to
 analyze breakage at the F<miniperl> level.  If it is known (or suspected) that
-tests will break during F<make minitest_prep> or F<make minitest> then runtime
+tests will break during F<make minitest_prep> or F<make minitest>, then runtime
 can be considerably reduced from the more typical case where breakage occurs
 during F<make test_prep> or F<make test_harness>.  However, the two cases
 cannot be mixed.
@@ -300,6 +300,13 @@ The output will look like this:
     configure_command:         sh ./Configure -des -Dusedevel 1>/dev/null
     make_test_prep_command:    make test_prep 1>/dev/null
     make_test_harness_command: make_test_harness 1>/dev/null
+
+Or like this, if you are doing F<miniperl>-level testing on a debugging build:
+
+    branch:                        blead
+    configure_command:             sh ./Configure -des -Dusedevel -DDEBUGGING 1>/dev/null
+    make_minitest_prep_command:    make minitest_prep 1>/dev/null
+    make_minitest_command:         make minitest 1>/dev/null
 
 =back
 
@@ -545,6 +552,8 @@ sub examine_one_commit {
     my $commit_score = 0;
 
     say STDERR "Configuring at $c" if $self->{verbose};
+
+    # first stage: configuration
     $rv = system($self->{configure_command});
     if ($rv) {
         carp "Unable to configure at $c";
@@ -554,6 +563,8 @@ sub examine_one_commit {
     else {
         $commit_score++;
 
+        # miniperl-level testing
+        # second and third levels are 'make minitest_prep' and 'make minitest'
         if ($self->{make_minitest_prep_command}) {
 
             say STDERR "Building miniperl at $c" if $self->{verbose};
@@ -577,6 +588,9 @@ sub examine_one_commit {
                 push @{$self->{results}}, { commit => $c, score => $commit_score };
             }
         }
+        # regular testing
+        # second and third levels are 'make test_prep' and 'make test_harness'
+        # option to skip 'make test_harness'
         else {
 
             say STDERR "Building $c" if $self->{verbose};
