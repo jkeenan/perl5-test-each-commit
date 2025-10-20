@@ -53,3 +53,4 @@ test failures can be detected merely by running 'make minitest', obviating the
 need for a full 'make test_prep' or 'make test_harness'.  We need to allow for
 this possibility with a 'make_minitest_command' option.
 
+RESPONSE: Implemented in 0.06 (10/20/2025).
