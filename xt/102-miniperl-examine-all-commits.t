@@ -41,7 +41,7 @@ my $opts = {
     configure_command => "sh ./Configure -des -Dusedevel -DDEBUGGING 1>/dev/null",
     make_minitest_prep_command => "make minitest_prep 1>/dev/null",
     make_minitest_command => "make minitest 1>/dev/null",
-    verbose => 1,
+    verbose => '',
 };
 
 {
