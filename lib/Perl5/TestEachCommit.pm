@@ -348,6 +348,12 @@ Get a list of SHAs of all commits being tested.
 
 Reference to an array holding list of all commits being tested.
 
+=item * Comment
+
+An exception will be thrown if the array holding the list of all commits being
+tested is empty.  This can occur, for example, if you mistakenly interchange
+the values for the C<--start> and C<--end> commits.
+
 =back
 
 =cut
@@ -358,7 +364,12 @@ sub get_commits {
     my $end_commit = $self->{end};
     my @commits = `git rev-list --reverse ${origin_commit}..${end_commit}`;
     chomp @commits;
-    return \@commits;
+    if (! scalar(@commits)) {
+        croak "No commits found in range; check values for --start and --end";
+    }
+    else {
+        return \@commits;
+    }
 }
 
 =head2 C<display_commits()>
