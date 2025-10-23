@@ -433,8 +433,11 @@ range.
 sub examine_all_commits {
     my $self = shift;
     $self->{results} = [];
-    for my $c (@{ $self->get_commits }) {
-        $self->examine_one_commit($c);
+    $self->{commits_count} = scalar @{ $self->get_commits };
+    for (my $i = 0; $i < $self->{commits_count}; $i++) {
+        say STDERR "\nExamining commit ", $i+1, " of $self->{commits_count} commits"
+            if $self->{verbose};
+        $self->examine_one_commit($self->get_commits->[$i]);
     }
     return $self;
 }
@@ -551,7 +554,7 @@ Called internally within C<examine_all_commits()>.
 =cut
 
 sub examine_one_commit {
-    my ($self, $c) = @_;
+    my ($self, $c, $i) = @_;
     chdir $self->{workdir} or croak "Unable to change to $self->{workdir}";
     # So that ./Configure, make test_prep and make_test_harness all behave
     # as they typically do in a git checkout.
