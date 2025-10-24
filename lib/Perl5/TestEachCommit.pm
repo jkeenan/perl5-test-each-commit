@@ -1,7 +1,7 @@
 package Perl5::TestEachCommit;
 use 5.014;
 use warnings;
-our $VERSION = '0.06';
+our $VERSION = '0.07';
 $VERSION = eval $VERSION;
 use Carp;
 use Data::Dump ( qw| dd pp| );
